@@ -1,0 +1,393 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Kairo design tokens ---------- */
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f6f7f8;
+  --sidebar: #f7f8f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f5;
+  --hover: rgba(15, 23, 42, 0.05);
+  --border: #e4e7eb;
+  --border-strong: #d1d5db;
+  --text: #0f172a;
+  --text-2: #334155;
+  --muted: #64748b;
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-soft: rgba(13, 148, 136, 0.1);
+  --accent-fg: #ffffff;
+  --violet: #6366f1;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --success: #16a34a;
+  --warning: #d97706;
+  --user-bubble: #eef2f4;
+  --code-bg: #f6f8fa;
+  --code-header: #eceff2;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f1214;
+  --bg-subtle: #14181b;
+  --sidebar: #0b0d0f;
+  --surface: #171b1f;
+  --surface-2: #1e2328;
+  --hover: rgba(255, 255, 255, 0.06);
+  --border: #252a30;
+  --border-strong: #343b42;
+  --text: #e8eaed;
+  --text-2: #c4c9cf;
+  --muted: #8b949e;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+  --accent-fg: #042f2c;
+  --violet: #818cf8;
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.12);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --user-bubble: #22282e;
+  --code-bg: #0b0e10;
+  --code-header: #161a1e;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-hover: var(--hover);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-fg-2: var(--text-2);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-violet: var(--violet);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-user-bubble: var(--user-bubble);
+  --color-code-bg: var(--code-bg);
+  --color-code-header: var(--code-header);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-mono-family), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow-soft: var(--shadow);
+}
+
+/* Base rules live in the base layer so Tailwind utilities (e.g. outline-none) can override them. */
+@layer base {
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+/* Thin, unobtrusive scrollbars */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #14b8a6 0%, #6366f1 100%);
+}
+.brand-text {
+  background: linear-gradient(135deg, #14b8a6 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Markdown content ---------- */
+.markdown {
+  font-size: 0.975rem;
+  line-height: 1.75;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote,
+.markdown table {
+  margin: 0.75em 0;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  font-weight: 650;
+  line-height: 1.3;
+  margin: 1.4em 0 0.6em;
+}
+.markdown h1 {
+  font-size: 1.5em;
+}
+.markdown h2 {
+  font-size: 1.3em;
+}
+.markdown h3 {
+  font-size: 1.12em;
+}
+.markdown ul {
+  list-style: disc;
+  padding-left: 1.5em;
+}
+.markdown ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+}
+.markdown li {
+  margin: 0.3em 0;
+}
+.markdown li > p {
+  margin: 0.25em 0;
+}
+.markdown a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.markdown strong {
+  font-weight: 650;
+}
+.markdown blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: 1em;
+  color: var(--text-2);
+}
+.markdown hr {
+  margin: 1.5em 0;
+  border-color: var(--border);
+}
+.markdown :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+.markdown .table-wrap {
+  overflow-x: auto;
+  margin: 0.75em 0;
+}
+.markdown table {
+  border-collapse: collapse;
+  font-size: 0.92em;
+  width: 100%;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid var(--border);
+  padding: 0.45em 0.75em;
+  text-align: left;
+}
+.markdown th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+/* ---------- Syntax highlighting (highlight.js classes) ---------- */
+.hljs {
+  color: #24292f;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #6e7781;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type,
+.hljs-doctag {
+  color: #cf222e;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-template-tag {
+  color: #0a3069;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-attr {
+  color: #0550ae;
+}
+.hljs-title,
+.hljs-section,
+.hljs-title.function_ {
+  color: #8250df;
+}
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: #116329;
+}
+.hljs-attr,
+.hljs-property,
+.hljs-params {
+  color: #953800;
+}
+.hljs-meta {
+  color: #6639ba;
+}
+.hljs-deletion {
+  color: #82071e;
+  background: #ffebe9;
+}
+
+.dark .hljs {
+  color: #d6deeb;
+}
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #7d8799;
+}
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-type,
+.dark .hljs-doctag {
+  color: #ff7ab2;
+}
+.dark .hljs-string,
+.dark .hljs-regexp,
+.dark .hljs-addition,
+.dark .hljs-attribute,
+.dark .hljs-template-tag {
+  color: #a5e075;
+}
+.dark .hljs-number,
+.dark .hljs-literal,
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-selector-attr {
+  color: #f78c6c;
+}
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-title.function_ {
+  color: #82aaff;
+}
+.dark .hljs-built_in,
+.dark .hljs-name,
+.dark .hljs-tag {
+  color: #5eead4;
+}
+.dark .hljs-attr,
+.dark .hljs-property,
+.dark .hljs-params {
+  color: #ffcb6b;
+}
+.dark .hljs-meta {
+  color: #c792ea;
+}
+.dark .hljs-deletion {
+  color: #ff8080;
+  background: rgba(255, 0, 0, 0.12);
+}
+
+/* Blinking caret shown at the end of a streaming response */
+.stream-caret::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: caret 1s steps(2, start) infinite;
+}
+@keyframes caret {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- User display preferences (set on <html> by PreferenceEffects) ---------- */
+html[data-font='small'] {
+  font-size: 15px;
+}
+html[data-font='large'] {
+  font-size: 17.5px;
+}
+html[data-code-wrap='true'] .code-pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+html[data-reduce-motion='true'] *,
+html[data-reduce-motion='true'] *::before,
+html[data-reduce-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

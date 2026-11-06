@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Builds
+backend/dist/
+frontend/.next/
+frontend/out/
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Environment (never commit secrets)
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Uploaded user files
+backend/uploads/
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+coverage/
+
+# Editors
+.vscode/
+.idea/

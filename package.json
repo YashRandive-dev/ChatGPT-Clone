@@ -1,0 +1,16 @@
+{
+  "name": "kairo-ai-chatbot",
+  "private": true,
+  "description": "Kairo – full-stack AI chat app (Next.js + Express + MongoDB + OpenAI)",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev": "node scripts/dev.mjs",
+    "stop": "node scripts/stop.mjs",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "test": "npm test --prefix backend && npm test --prefix frontend",
+    "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend",
+    "seed:admin": "npm run seed:admin --prefix backend --"
+  }
+}
