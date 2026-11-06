@@ -227,10 +227,17 @@ All routes are under `/api`. JSON errors look like `{ "error": { "code", "messag
 ### Database: MongoDB Atlas
 Create a cluster and a database user. Under Network Access, allow your backend host. Copy the SRV URI.
 
-### Backend: Render (or Railway, Fly.io, any Node host)
-* **Blueprint:** push the repo, then New → Blueprint, and pick `render.yaml`. Fill in `MONGODB_URI`, `OPENAI_API_KEY`, `FRONTEND_URL` (your Vercel URL), and `ADMIN_EMAILS`. The secrets are generated for you.
-* **Manual:** root `backend`, build `npm ci --include=dev && npm run build`, start `npm start`, health check `/api/health`, and set `NODE_ENV=production` and `TRUST_PROXY=true`.
-* Uploaded files are written to `UPLOAD_DIR`. Most PaaS filesystems are temporary, so mount a persistent disk there (the blueprint mounts `/var/data`).
+### Backend: Render (free plan)
+* **Blueprint:** New → Blueprint → pick this repo (`render.yaml`, free plan).
+* **Manual web service:**
+  * Root Directory: `backend`
+  * Build Command: `npm install && npm run build`
+  * Start Command: `npm start`
+  * Health Check Path: `/api/health`
+  * `npm start` also compiles automatically if `dist/` is missing, so the app still starts even if the build command is just `npm install`.
+* **Environment variables:** `NODE_ENV=production`, `TRUST_PROXY=true`, `MONGODB_URI` (Atlas), `FRONTEND_URL` (your Vercel URL), `ADMIN_EMAILS`, and three random 32+ character secrets for `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` and `COOKIE_SECRET`.
+* **AI on Render:** Ollama runs on your own computer, so a server on Render can't reach it. Use a cloud provider there. For a free option, use Groq: `OPENAI_BASE_URL=https://api.groq.com/openai/v1`, `OPENAI_API_KEY=<your Groq key>`, `AI_MODELS=llama-3.3-70b-versatile|Llama 3.3 70B|false`, `AI_DEFAULT_MODEL=llama-3.3-70b-versatile`.
+* **Free-plan limits:** the service sleeps after ~15 minutes idle (the first request then takes ~1 minute), and uploaded files are lost on each redeploy because there is no persistent disk. On a paid plan, mount a disk and point `UPLOAD_DIR` at it.
 
 ### Frontend: Vercel
 Import the repo and set **Root Directory** to `frontend`. Then pick one of these:

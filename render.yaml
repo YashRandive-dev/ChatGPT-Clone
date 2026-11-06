@@ -1,23 +1,35 @@
 # Render Blueprint for the Kairo API (https://render.com/docs/blueprint-spec)
+# Free plan. Note: free instances sleep when idle, and uploaded files are lost on redeploy
+# (free plans have no persistent disk).
 services:
   - type: web
     name: kairo-api
     runtime: node
     rootDir: backend
-    plan: starter
-    buildCommand: npm ci --include=dev && npm run build
+    plan: free
+    # `npm start` also compiles automatically if dist/ is missing, so a plain
+    # `npm install` build command works too.
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "22"
       - key: TRUST_PROXY
         value: "true"
       - key: MONGODB_URI
         sync: false
+      - key: FRONTEND_URL
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
-      - key: FRONTEND_URL
+      - key: OPENAI_BASE_URL
+        sync: false
+      - key: AI_MODELS
+        sync: false
+      - key: AI_DEFAULT_MODEL
         sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
@@ -27,9 +39,3 @@ services:
         generateValue: true
       - key: ADMIN_EMAILS
         sync: false
-      - key: UPLOAD_DIR
-        value: /var/data/uploads
-    disk:
-      name: kairo-uploads
-      mountPath: /var/data
-      sizeGB: 1
