@@ -44,5 +44,13 @@ async function main() {
 
 main().catch((err) => {
   logger.error('Failed to start server', err);
+  const text = String((err as Error)?.message ?? err);
+  if (/ECONNREFUSED|ENOTFOUND|querySrv|Server selection timed out|ReplicaSetNoPrimary|IP.*(whitelist|access list)|bad auth|Authentication failed/i.test(text)) {
+    logger.error(
+      'Could not connect to MongoDB. Check MONGODB_URI. If you use MongoDB Atlas from a cloud host (e.g. Render), ' +
+        'allow it in Atlas → Network Access → Add IP Address → "Allow access from anywhere" (0.0.0.0/0), ' +
+        'and check the database username/password in the connection string.',
+    );
+  }
   process.exit(1);
 });
