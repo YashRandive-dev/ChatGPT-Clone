@@ -47,8 +47,12 @@ function mapOpenAIError(err: unknown): AIProviderError {
   }
   if (err instanceof OpenAI.APIError) {
     const code = (err.code ?? '') as string;
-    if (err.status === 404 || code === 'model_not_found') {
+    if (code === 'model_not_found' || (err.status === 404 && /model/i.test(err.message))) {
       return new AIProviderError('The selected model is not available right now. Choose another model.', 'MODEL_UNAVAILABLE', 400);
+    }
+    if (err.status === 404) {
+      // A 404 that isn't about the model means the API address itself is wrong.
+      return new AIProviderError('The AI provider address is misconfigured on the server (check OPENAI_BASE_URL).', 'AI_UNAVAILABLE', 502);
     }
     if (err.status === 401 || err.status === 403) {
       return new AIProviderError('The AI provider rejected the server credentials. Contact the administrator.', 'AI_AUTH', 503);

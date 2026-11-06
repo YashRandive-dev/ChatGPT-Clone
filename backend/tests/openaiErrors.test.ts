@@ -21,6 +21,13 @@ describe('OpenAI error mapping', () => {
     expect(e.code).toBe('AI_RATE_LIMIT');
   });
 
+  it('tells a wrong API address apart from a missing model', () => {
+    const e = normaliseOpenAIError(apiError(404, { code: '', type: '', message: 'Not Found' }));
+    expect(e.code).toBe('AI_UNAVAILABLE');
+    expect(e.message).toMatch(/OPENAI_BASE_URL/);
+    expect(normaliseOpenAIError(apiError(404, { code: '', type: 'invalid_request_error', message: 'The model `x` does not exist' })).code).toBe('MODEL_UNAVAILABLE');
+  });
+
   it('maps unknown models and bad keys', () => {
     expect(normaliseOpenAIError(apiError(404, { code: 'model_not_found', type: 'invalid_request_error', message: 'nope' })).code).toBe('MODEL_UNAVAILABLE');
     expect(normaliseOpenAIError(apiError(401, { code: 'invalid_api_key', type: 'invalid_request_error', message: 'bad key' })).code).toBe('AI_AUTH');
