@@ -17,8 +17,10 @@ services:
         value: production
       - key: NODE_VERSION
         value: "22"
+      # Proxy hops in front of the API: 2 when Vercel forwards /api to Render (recommended setup),
+      # 1 when the browser calls Render directly.
       - key: TRUST_PROXY
-        value: "true"
+        value: "2"
       - key: MONGODB_URI
         sync: false
       - key: FRONTEND_URL

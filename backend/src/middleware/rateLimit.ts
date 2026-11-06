@@ -11,6 +11,8 @@ export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 1000,
   standardHeaders: 'draft-8',
+  // Proxies such as Vercel add the standard Forwarded header; client IPs come from X-Forwarded-For via 'trust proxy'.
+  validate: { forwardedHeader: false },
   legacyHeaders: false,
   skip: skipInTests,
   message: message('Too many requests. Please slow down.'),
@@ -20,6 +22,8 @@ export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
   standardHeaders: 'draft-8',
+  // Proxies such as Vercel add the standard Forwarded header; client IPs come from X-Forwarded-For via 'trust proxy'.
+  validate: { forwardedHeader: false },
   legacyHeaders: false,
   skip: skipInTests,
   message: message('Too many authentication attempts. Try again in a few minutes.'),
@@ -31,6 +35,8 @@ export const aiLimiter = rateLimit({
   limit: async () => (await getSettings()).limits.aiRequestsPerMinute || 1000,
   keyGenerator: (req: Request) => (req.user ? `u:${req.user._id.toString()}` : ipKeyGenerator(req.ip ?? '')),
   standardHeaders: 'draft-8',
+  // Proxies such as Vercel add the standard Forwarded header; client IPs come from X-Forwarded-For via 'trust proxy'.
+  validate: { forwardedHeader: false },
   legacyHeaders: false,
   skip: skipInTests,
   message: message('You are sending messages too quickly. Wait a moment and try again.'),
@@ -41,6 +47,8 @@ export const uploadLimiter = rateLimit({
   limit: 60,
   keyGenerator: (req: Request) => (req.user ? `u:${req.user._id.toString()}` : ipKeyGenerator(req.ip ?? '')),
   standardHeaders: 'draft-8',
+  // Proxies such as Vercel add the standard Forwarded header; client IPs come from X-Forwarded-For via 'trust proxy'.
+  validate: { forwardedHeader: false },
   legacyHeaders: false,
   skip: skipInTests,
   message: message('Upload limit reached. Try again later.'),

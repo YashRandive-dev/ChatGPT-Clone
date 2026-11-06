@@ -14,7 +14,7 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(5000),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
-  TRUST_PROXY: bool(false),
+  TRUST_PROXY: z.string().optional(),
 
   MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/kairo'),
 
@@ -66,8 +66,24 @@ function secret(name: 'JWT_ACCESS_SECRET' | 'JWT_REFRESH_SECRET' | 'COOKIE_SECRE
   return `dev-insecure-${name.toLowerCase()}-fallback-change-me-please`;
 }
 
+/**
+ * How many reverse proxies sit in front of the app (Express "trust proxy" hops), so client
+ * IPs (used for rate limiting) are read correctly from X-Forwarded-For.
+ *  - unset: 1 on Render (its load balancer), otherwise 0 (local development)
+ *  - "true" = 1, "false" = 0, or a number. Use 2 when a Vercel rewrite forwards /api to Render.
+ */
+export function trustProxyHops(value: string | undefined): number {
+  const v = (value ?? '').trim().toLowerCase();
+  if (v === '') return process.env.RENDER ? 1 : 0;
+  if (v === 'true' || v === 'yes') return 1;
+  if (v === 'false' || v === 'no') return 0;
+  const n = Number(v);
+  return Number.isInteger(n) && n >= 0 && n <= 10 ? n : 1;
+}
+
 export const env = {
   ...raw,
+  TRUST_PROXY: trustProxyHops(raw.TRUST_PROXY),
   isProd,
   isTest,
   JWT_ACCESS_SECRET: secret('JWT_ACCESS_SECRET'),

@@ -5,7 +5,7 @@ import { Conversation } from '../src/models/Conversation';
 import { Message } from '../src/models/Message';
 import { Feedback } from '../src/models/Feedback';
 import { getSettings, parseModelsFromEnv, resolveModel, syncModelsFromEnv, updateSettings } from '../src/services/settingsService';
-import { env } from '../src/config/env';
+import { env, trustProxyHops } from '../src/config/env';
 import { titleFromMessage } from '../src/utils/strings';
 import { detectKind } from '../src/services/fileService';
 
@@ -88,5 +88,20 @@ describe('model catalog sync', () => {
     } finally {
       (env as { AI_MODELS: string }).AI_MODELS = original;
     }
+  });
+});
+
+describe('trust proxy setting', () => {
+  it('parses TRUST_PROXY and defaults to 1 hop on Render', async () => {
+    expect(trustProxyHops('2')).toBe(2);
+    expect(trustProxyHops('true')).toBe(1);
+    expect(trustProxyHops('false')).toBe(0);
+    const before = process.env.RENDER;
+    delete process.env.RENDER;
+    expect(trustProxyHops(undefined)).toBe(0);
+    process.env.RENDER = 'true';
+    expect(trustProxyHops('')).toBe(1);
+    if (before === undefined) delete process.env.RENDER;
+    else process.env.RENDER = before;
   });
 });
