@@ -231,10 +231,12 @@ Create a cluster and a database user. Under Network Access, allow your backend h
 * **Blueprint:** New → Blueprint → pick this repo (`render.yaml`, free plan).
 * **Manual web service:**
   * Root Directory: `backend`
-  * Build Command: `npm install && npm run build`
+  * Build Command: `npm install --omit=dev && npm run build`
   * Start Command: `npm start`
   * Health Check Path: `/api/health`
   * `npm start` also compiles automatically if `dist/` is missing, so the app still starts even if the build command is just `npm install`.
+* If the Root Directory is left blank, use Build Command `npm run build:backend` and Start Command `npm start` instead.
+* Node 22.12 or newer is required (set by `engines` in `package.json`, which Render follows).
 * **Environment variables:** `NODE_ENV=production`, `TRUST_PROXY=true`, `MONGODB_URI` (Atlas), `FRONTEND_URL` (your Vercel URL), `ADMIN_EMAILS`, and three random 32+ character secrets for `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` and `COOKIE_SECRET`.
 * **AI on Render:** Ollama runs on your own computer, so a server on Render can't reach it. Use a cloud provider there. For a free option, use Groq: `OPENAI_BASE_URL=https://api.groq.com/openai/v1`, `OPENAI_API_KEY=<your Groq key>`, `AI_MODELS=llama-3.3-70b-versatile|Llama 3.3 70B|false`, `AI_DEFAULT_MODEL=llama-3.3-70b-versatile`.
 * **Free-plan limits:** the service sleeps after ~15 minutes idle (the first request then takes ~1 minute), and uploaded files are lost on each redeploy because there is no persistent disk. On a paid plan, mount a disk and point `UPLOAD_DIR` at it.
