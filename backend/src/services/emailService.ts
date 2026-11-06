@@ -12,6 +12,10 @@ function getTransporter(): Transporter {
       port: env.SMTP_PORT,
       secure: env.SMTP_SECURE,
       auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
+      // Fail fast instead of nodemailer's 2-minute defaults when the mail server is unreachable.
+      connectionTimeout: 15_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 30_000,
     });
   } else {
     // No SMTP configured: render the email as JSON and log it (development convenience).

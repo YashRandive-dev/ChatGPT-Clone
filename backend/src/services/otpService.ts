@@ -10,6 +10,10 @@ import { User, type IUser } from '../models/User';
 import { sendLoginOtpEmail, sendPasswordResetOtpEmail, sendVerificationOtpEmail } from './emailService';
 import { LoginChallenge } from '../models/LoginChallenge';
 
+function deliver(sending: Promise<void>, what: string) {
+  sending.catch((err) => logger.error(`Failed to send ${what} email (check the SMTP_* settings)`, err));
+}
+
 export const OTP_LENGTH = 6;
 export const OTP_TTL_MINUTES = 10;
 export const OTP_MAX_ATTEMPTS = 5;
@@ -63,11 +67,8 @@ export async function issueEmailVerificationOtp(user: Pick<IUser, '_id' | 'email
     { email: user.email, codeHash: hashOtp('verify', user._id, code), attempts: 0, expiresAt: expiry(), lastSentAt: new Date() },
     { upsert: true, setDefaultsOnInsert: true },
   );
-  try {
-    await sendVerificationOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES);
-  } catch (err) {
-    logger.error('Failed to send verification code', err);
-  }
+  // Delivered in the background: a slow or unreachable mail server must never hold up the request.
+  deliver(sendVerificationOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES), 'verification code');
   return { expiresInSeconds: OTP_TTL_MINUTES * 60, resendInSeconds: RESEND_COOLDOWN_SECONDS };
 }
 
@@ -116,11 +117,8 @@ export async function requestPasswordResetOtp(email: string) {
     },
     { upsert: true, setDefaultsOnInsert: true },
   );
-  try {
-    await sendPasswordResetOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES);
-  } catch (err) {
-    logger.error('Failed to send password reset code', err);
-  }
+  // Delivered in the background: a slow or unreachable mail server must never hold up the request.
+  deliver(sendPasswordResetOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES), 'password reset code');
 }
 
 /** Exchanges a correct reset code for a short-lived, single-use reset token. */
@@ -171,11 +169,8 @@ export function maskEmail(email: string) {
 
 async function sendLoginCode(user: Pick<IUser, '_id' | 'email' | 'name'>) {
   const code = generateOtp();
-  try {
-    await sendLoginOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES);
-  } catch (err) {
-    logger.error('Failed to send sign-in code', err);
-  }
+  // Delivered in the background: a slow or unreachable mail server must never hold up the request.
+  deliver(sendLoginOtpEmail(user.email, user.name, code, OTP_TTL_MINUTES), 'sign-in code');
   return hashOtp('login', user._id, code);
 }
 
